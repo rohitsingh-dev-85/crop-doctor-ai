@@ -78,6 +78,7 @@ const HEALTHY_RESULT = {
   watering: "Maintain consistent watering schedule. Water deeply 2-3 times per week depending on climate and soil type.",
   prevention: "Continue monitoring for early signs of disease. Practice crop rotation and maintain proper spacing between plants.",
   isHealthy: true,
+  needsWater: true,
 }
 
 const FALLBACK_DISEASE_RESULT = (label: string) => ({
@@ -117,7 +118,8 @@ export async function POST(req: Request) {
     formData.append("file", file, "crop_upload.jpg")
 
     // Contact LOCAL PYTHON AI ENGINE
-    const response = await fetch("http://127.0.0.1:8000/predict", {
+    const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:8000";
+    const response = await fetch(`${backendUrl}/predict`, {
       method: "POST",
       body: formData,
     })
@@ -163,6 +165,7 @@ export async function POST(req: Request) {
         watering: matchedDisease.watering,
         prevention: matchedDisease.prevention,
         isHealthy: false,
+        needsWater: !/avoid|reduce|less often|without overwatering/i.test(matchedDisease.watering),
       })
     }
 
@@ -172,6 +175,7 @@ export async function POST(req: Request) {
     return Response.json({
       ...fallbackData,
       confidence,
+      needsWater: false,
     })
 
   } catch (error: any) {

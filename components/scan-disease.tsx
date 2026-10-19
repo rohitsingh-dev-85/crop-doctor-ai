@@ -3,6 +3,7 @@
 import { useRef, useState, useCallback } from "react"
 import { Upload, ScanLine } from "lucide-react"
 import { AIAnalysisPanel, type AnalysisResult } from "./ai-analysis-panel"
+import { IrrigationControl } from "./irrigation-control"
 
 export function ScanDisease() {
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -134,6 +135,7 @@ export function ScanDisease() {
             </button>
           </div>
         </div>
+        <IrrigationControl result={result} />
       </div>
 
       {/* AI Analysis Panel */}

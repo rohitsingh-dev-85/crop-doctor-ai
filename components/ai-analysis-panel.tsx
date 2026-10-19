@@ -10,6 +10,7 @@ export interface AnalysisResult {
   watering: string
   prevention: string
   isHealthy: boolean
+  needsWater?: boolean
 }
 
 interface AIAnalysisPanelProps {
@@ -56,7 +57,10 @@ export function AIAnalysisPanel({ result, isLoading }: AIAnalysisPanelProps) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ text, targetLang: language })
           })
-          if (!res.ok) throw new Error("Translation failed")
+          if (!res.ok) {
+            console.warn("Translation failed for text");
+            return text;
+          }
           const data = await res.json()
           return data.translated || text
         }
